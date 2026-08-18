@@ -1,0 +1,9 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Release" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="kvcstrm.vcxproj" Id="00000000-0000-0000-0000-000000000006">
+    <Deploy />
+  </Project>
+</Solution>

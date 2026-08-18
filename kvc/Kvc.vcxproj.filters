@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="TrustedInstallerIntegrator.cpp" />
+    <ClCompile Include="WmiDefenderClient.cpp" />
+    <ClCompile Include="KvcStrmClient.cpp" />
+    <ClCompile Include="ControllerCore.cpp" />
+    <ClCompile Include="CiOptionsFinder.cpp" />
+    <ClCompile Include="DSEBypass.cpp" />
+    <ClCompile Include="SymbolEngine.cpp" />
+    <ClCompile Include="ControllerDSE.cpp" />
+    <ClCompile Include="ControllerSmss.cpp" />
+    <ClCompile Include="ControllerBinaryManager.cpp" />
+    <ClCompile Include="ControllerForensic.cpp" />
+    <ClCompile Include="ControllerDriverManager.cpp" />
+    <ClCompile Include="ControllerDriverLoader.cpp" />
+    <ClCompile Include="ProcessDriverSession.cpp" />
+    <ClCompile Include="ProcessEnumerator.cpp" />
+    <ClCompile Include="ProcessProtection.cpp" />
+    <ClCompile Include="ProcessTerminator.cpp" />
+    <ClCompile Include="ProcessDisplay.cpp" />
+    <ClCompile Include="ControllerMemoryOperations.cpp" />
+    <ClCompile Include="ControllerSystemIntegration.cpp" />
+    <ClCompile Include="ControllerEventLogOperations.cpp" />
+    <ClCompile Include="ControllerModuleOperations.cpp" />
+    <ClCompile Include="ProcessManager.cpp" />
+    <ClCompile Include="ModuleManager.cpp" />
+    <ClCompile Include="OffsetFinder.cpp" />
+    <ClCompile Include="kvc.cpp" />
+    <ClCompile Include="kvcDrv.cpp" />
+    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Common.cpp" />
+    <ClCompile Include="WatermarkManager.cpp" />
+    <ClCompile Include="HiveManager.cpp" />
+    <ClCompile Include="SessionManager.cpp" />
+    <ClCompile Include="ServiceManager.cpp" />
+    <ClCompile Include="DefenderManager.cpp" />
+    <ClCompile Include="DefenderStealth.cpp" />
+    <ClCompile Include="DefenderUI.cpp" />
+    <ClCompile Include="HelpSystem.cpp" />
+    <ClCompile Include="ControllerBlocker.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="TrustedInstallerIntegrator.h" />
+    <ClInclude Include="WmiDefenderClient.h" />
+    <ClInclude Include="common.h" />
+    <ClInclude Include="CiOptionsFinder.h" />
+    <ClInclude Include="DSEBypass.h" />
+    <ClInclude Include="KvcStrmClient.h" />
+    <ClInclude Include="SymbolEngine.h" />
+    <ClInclude Include="Controller.h" />
+    <ClInclude Include="OffsetFinder.h" />
+    <ClInclude Include="kvcDrv.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="WatermarkManager.h" />
+    <ClInclude Include="HiveManager.h" />
+    <ClInclude Include="SessionManager.h" />
+    <ClInclude Include="ServiceManager.h" />
+    <ClInclude Include="HelpSystem.h" />
+    <ClInclude Include="DefenderManager.h" />
+    <ClInclude Include="DefenderStealth.h" />
+    <ClInclude Include="DefenderUI.h" />
+    <ClInclude Include="ProcessManager.h" />
+    <ClInclude Include="ModuleManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="kvc.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ICON\kvc.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="MmPoolTelemetry.asm" />
+    <MASM Include="ScreenShake.asm" />
+    <MASM Include="addons\main.asm" />
+    <MASM Include="addons\game.asm" />
+    <MASM Include="addons\render.asm" />
+    <MASM Include="addons\registry.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="vg\main.asm">
+      <Filter>vg</Filter>
+    </MASM>
+    <MASM Include="vg\window.asm">
+      <Filter>vg</Filter>
+    </MASM>
+    <MASM Include="vg\handlers.asm">
+      <Filter>vg</Filter>
+    </MASM>
+    <MASM Include="vg\layout.asm">
+      <Filter>vg</Filter>
+    </MASM>
+    <MASM Include="vg\listview.asm">
+      <Filter>vg</Filter>
+    </MASM>
+    <MASM Include="vg\tray.asm">
+      <Filter>vg</Filter>
+    </MASM>
+    <MASM Include="vg\drop.asm">
+      <Filter>vg</Filter>
+    </MASM>
+    <MASM Include="vg\config.asm">
+      <Filter>vg</Filter>
+    </MASM>
+    <MASM Include="vg\theme.asm">
+      <Filter>vg</Filter>
+    </MASM>
+    <MASM Include="vg\strutil.asm">
+      <Filter>vg</Filter>
+    </MASM>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+{
+  "Profiles": {
+    "Standard": {
+      "Name": "Microsoft Windows"
+    },
+    "Driver": {
+      "Name": "Microsoft Windows OS"
+    }
+  }
+}

@@ -1,0 +1,312 @@
+// Controller.h
+// Main orchestration class for KVC Framework operations
+
+#pragma once
+
+#include "SessionManager.h"
+#include "kvcDrv.h"
+#include "KvcStrmClient.h"
+#include "DSEBypass.h"
+#include "OffsetFinder.h"
+#include "TrustedInstallerIntegrator.h"
+#include "Utils.h"
+#include "WatermarkManager.h"
+#include "ModuleManager.h"
+#include <vector>
+#include <memory>
+#include <optional>
+#include <chrono>
+#include <unordered_map>
+
+// Kernel process structure representation
+struct ProcessEntry
+{
+    ULONG_PTR KernelAddress;
+    DWORD Pid;
+    UCHAR ProtectionLevel;
+    UCHAR SignerType;
+    UCHAR SignatureLevel;
+    UCHAR SectionSignatureLevel;
+    std::wstring ProcessName;
+    std::wstring UserName;
+    std::wstring IntegrityLevel;
+};
+
+// Process search result
+struct ProcessMatch
+{
+    DWORD Pid = 0;
+    std::wstring ProcessName;
+    ULONG_PTR KernelAddress = 0;
+};
+
+// Main controller class managing kernel driver, process protection, 
+// memory dumping, DPAPI extraction, and system operations
+class Controller
+{
+public:
+    Controller();
+    ~Controller();
+
+    Controller(const Controller&) = delete;
+    Controller& operator=(const Controller&) = delete;
+    Controller(Controller&&) noexcept = default;
+    Controller& operator=(Controller&&) noexcept = default;
+
+	// DSE bypass operations (Standard method)
+	bool DisableDSE() noexcept;
+	bool RestoreDSE() noexcept;
+	ULONG_PTR GetCiOptionsAddress() const noexcept;
+	bool GetDSEStatus(ULONG_PTR& outAddress, DWORD& outValue) noexcept;
+	
+	// DSE bypass operations (Safe/PDB-based method)
+    bool DisableDSESafe() noexcept;
+    bool RestoreDSESafe() noexcept;
+	
+	// External driver loading (with DSE bypass)
+	bool LoadExternalDriver(const std::wstring& driverPath, DWORD startType = SERVICE_DEMAND_START) noexcept;
+	bool ReloadExternalDriver(const std::wstring& driverNameOrPath) noexcept;
+	bool StopExternalDriver(const std::wstring& driverNameOrPath) noexcept;
+	bool RemoveExternalDriver(const std::wstring& driverNameOrPath) noexcept;
+	bool InstallPnpDriver(const std::wstring& infPath, const std::wstring& hardwareId) noexcept;
+	bool RemovePnpDriver(const std::wstring& hardwareId) noexcept;
+
+	// kvcstrm lifecycle helpers: ensure handle open (starting service if needed),
+	// cleanup (stop service only if we auto-started it)
+	bool EnsureStrmOpen(bool& autoStarted) noexcept;
+	void CleanupStrm(bool autoStarted) noexcept;
+	
+	// Handles removal and restoration of system watermark related to signature hijacking
+	bool RemoveWatermark() noexcept;
+	bool RestoreWatermark() noexcept;
+	std::wstring GetWatermarkStatus() noexcept;
+
+    // Memory dumping
+    bool DumpProcess(DWORD pid, const std::wstring& outputPath, std::wstring* outDumpPath = nullptr) noexcept;
+    bool DumpProcessByName(const std::wstring& processName, const std::wstring& outputPath, std::wstring* outDumpPath = nullptr) noexcept;
+	
+	// Module enumeration
+	bool EnumerateProcessModules(DWORD pid) noexcept;
+	bool EnumerateProcessModulesByName(const std::wstring& processName) noexcept;
+	bool ReadModuleMemory(DWORD pid, const std::wstring& moduleName, ULONG_PTR offset, size_t size) noexcept;
+    
+    // SMSS Boot-Phase Driver Loader
+    bool InstallSmssDriver(const std::wstring& driverArg, bool usePdb = false) noexcept;
+    bool UninstallSmss() noexcept;
+
+    // Binary management
+    bool LoadAndSplitCombinedBinaries() noexcept;
+    bool EnsureBinaryComponents() noexcept;
+    bool WriteExtractedComponents(const std::vector<BYTE>& kvcPassData,
+                                  const std::vector<BYTE>& kvcCryptData) noexcept;
+    bool DeployUnderVolter() noexcept;
+    bool RemoveUnderVolter() noexcept;
+    std::wstring GetUnderVolterStatus() noexcept;
+
+    // Filesystem blocker (kvcblocker.sys minifilter, service: clrcd)
+    bool EnsureBlockerDriver() noexcept;
+    bool IsBlockerRunning() noexcept;
+    std::wstring GetBlockerStatus() noexcept;
+
+    // Forensic module (KvcForensic.exe embedded in kvcforensic.dat)
+    bool IsForensicAvailable() noexcept;
+    bool DeployForensicModule() noexcept;
+    bool RunForensicAnalysis(const std::wstring& dumpPath, const std::wstring& format,
+                             bool full, const std::wstring& ticketsDir) noexcept;
+    bool LaunchForensicGui() noexcept;
+
+    // Process information
+    bool ListProtectedProcesses() noexcept;
+    std::vector<ProcessEntry> GetAllProcessList() noexcept;
+    bool GetProcessProtection(DWORD pid) noexcept;
+    bool GetProcessProtectionByName(const std::wstring& processName) noexcept;
+	bool PrintProcessInfo(DWORD pid) noexcept;
+	
+
+    // Process protection manipulation
+    bool SetProcessProtection(DWORD pid, const std::wstring& protectionLevel, const std::wstring& signerType) noexcept;
+    bool ProtectProcess(DWORD pid, const std::wstring& protectionLevel, const std::wstring& signerType) noexcept;
+    bool UnprotectProcess(DWORD pid) noexcept;
+
+    // Process signature spoofing
+    bool SpoofProcessSignatures(DWORD pid, UCHAR exeSig, UCHAR dllSig) noexcept;
+    bool SpoofProcessSignaturesByName(const std::wstring& processName, UCHAR exeSig, UCHAR dllSig) noexcept;
+
+    // Name-based operations
+    bool ProtectProcessByName(const std::wstring& processName, const std::wstring& protectionLevel, const std::wstring& signerType) noexcept;
+    bool UnprotectProcessByName(const std::wstring& processName) noexcept;
+    bool SetProcessProtectionByName(const std::wstring& processName, const std::wstring& protectionLevel, const std::wstring& signerType) noexcept;
+
+	// Signer-based batch operations
+	bool UnprotectBySigner(const std::wstring& signerName) noexcept;
+	bool ListProcessesBySigner(const std::wstring& signerName) noexcept;
+	bool SetProtectionBySigner(const std::wstring& currentSigner, 
+							  const std::wstring& level, 
+							  const std::wstring& newSigner) noexcept;
+
+	// Session state management
+    bool RestoreProtectionBySigner(const std::wstring& signerName) noexcept;
+    bool RestoreAllProtection() noexcept;
+    void ShowSessionHistory() noexcept;
+	bool SetProcessProtection(ULONG_PTR addr, UCHAR protection) noexcept;
+	bool SetProcessSignatures(ULONG_PTR addr, UCHAR exeSig, UCHAR dllSig) noexcept;
+	
+	SessionManager m_sessionMgr;
+
+    // Batch operations
+    bool UnprotectAllProcesses() noexcept;
+    bool UnprotectMultipleProcesses(const std::vector<std::wstring>& targets) noexcept;
+	bool ProtectMultipleProcesses(const std::vector<std::wstring>& targets, 
+                               const std::wstring& protectionLevel, 
+                               const std::wstring& signerType) noexcept;
+	bool SetMultipleProcessesProtection(const std::vector<std::wstring>& targets, 
+										 const std::wstring& protectionLevel, 
+										 const std::wstring& signerType) noexcept;
+	
+    // Process termination
+    bool KillMultipleProcesses(const std::vector<DWORD>& pids) noexcept;
+	bool KillMultipleTargets(const std::vector<std::wstring>& targets) noexcept;
+    bool KillProcess(DWORD pid) noexcept;
+    bool KillProcessByName(const std::wstring& processName) noexcept;
+
+    // Kernel access
+    std::optional<ULONG_PTR> GetProcessKernelAddress(DWORD pid) noexcept;
+    std::optional<UCHAR> GetProcessProtection(ULONG_PTR kernelAddress) noexcept;
+    std::vector<ProcessEntry> GetProcessList() noexcept;
+    std::vector<ProcessMatch> FindProcessesByName(const std::wstring& pattern) noexcept;
+
+    // Self-protection
+    bool SelfProtect(const std::wstring& protectionLevel, const std::wstring& signerType) noexcept;
+    std::optional<ProcessMatch> ResolveNameWithoutDriver(const std::wstring& processName) noexcept;
+
+    // TrustedInstaller operations
+    bool RunAsTrustedInstaller(const std::wstring& commandLine);
+    bool RunAsTrustedInstallerSilent(const std::wstring& command);
+    bool AddContextMenuEntries();
+    
+    // Windows Defender exclusions
+    bool AddToDefenderExclusions(const std::wstring& customPath = L"");
+    bool RemoveFromDefenderExclusions(const std::wstring& customPath = L"");
+    bool AddDefenderExclusion(TrustedInstallerIntegrator::ExclusionType type, const std::wstring& value);
+    bool RemoveDefenderExclusion(TrustedInstallerIntegrator::ExclusionType type, const std::wstring& value);
+    
+    // Type-specific exclusions
+    bool AddExtensionExclusion(const std::wstring& extension);
+    bool RemoveExtensionExclusion(const std::wstring& extension);
+    bool AddIpAddressExclusion(const std::wstring& ipAddress);
+    bool RemoveIpAddressExclusion(const std::wstring& ipAddress);
+    bool AddProcessExclusion(const std::wstring& processName);
+    bool RemoveProcessExclusion(const std::wstring& processName);
+    bool AddPathExclusion(const std::wstring& path);
+    bool RemovePathExclusion(const std::wstring& path);
+    
+    // System administration
+    bool ClearSystemEventLogs() noexcept;
+
+    // Driver management
+    bool InstallDriver() noexcept;
+    bool UninstallDriver() noexcept;
+    void DeleteDriverFiles() noexcept;
+    bool StartDriverService() noexcept;
+    bool StopDriverService() noexcept;
+    bool StartDriverServiceSilent() noexcept;
+    
+	// Driver extraction (already decrypted by Utils)
+	std::vector<BYTE> ExtractDriver(std::vector<BYTE>& outKvcKiller, std::vector<BYTE>& outKvcBlocker, std::vector<BYTE>& outKvcstrm) noexcept;
+	
+    // Emergency operations
+    bool PerformAtomicCleanup() noexcept;
+
+    // Backdoor management
+    bool InstallStickyKeysBackdoor() noexcept;
+    bool RemoveStickyKeysBackdoor() noexcept;
+
+    // ======================================================
+    // PUBLIC ACCESS METHODS FOR DSE STATUS CHECKING
+    // ======================================================
+    
+    // Driver session management for external access
+    bool BeginDriverSession();
+    void EndDriverSession(bool force = false);
+    
+    // DSE state checking (unified)
+    bool CheckDSENGState(DSEBypass::DSEState& outState) noexcept;
+    std::wstring GetDSENGStatusInfo() noexcept;
+    
+    // Direct access to drivers
+    std::unique_ptr<kvc>& GetRTC() { return m_rtc; }
+    KvcStrmClient& GetStrm() { return m_strm; }
+
+private:
+    TrustedInstallerIntegrator m_trustedInstaller;
+    WatermarkManager m_watermarkManager{m_trustedInstaller};
+	std::unique_ptr<kvc> m_rtc;
+	KvcStrmClient m_strm;
+	ULONG64 m_cachedTokenOffset = 0;
+	std::unique_ptr<OffsetFinder> m_of;
+	std::unique_ptr<DSEBypass> m_dseBypass;  // Unified DSE manager
+
+    // Privilege management
+	bool WriteFileWithPrivileges(const std::wstring& filePath, const std::vector<BYTE>& data) noexcept;
+
+    // Driver operations
+    bool ForceRemoveService() noexcept;
+    bool EnsureDriverAvailable() noexcept;
+    bool IsDriverCurrentlyLoaded() noexcept;
+    bool PerformAtomicInit() noexcept;
+    bool PerformAtomicInitWithErrorCleanup() noexcept;
+    bool InstallDriverSilently() noexcept;
+    bool RegisterDriverServiceSilent(const std::wstring& driverPath) noexcept;
+	
+	// Driver session management
+    bool m_driverSessionActive = false;
+    std::chrono::steady_clock::time_point m_lastDriverUsage;
+    
+    bool IsServiceZombie() noexcept;
+    void UpdateDriverUsageTimestamp();
+
+    // Non-compliant host process handling (e.g. MSI Afterburner owning a conflicting driver).
+    // Reads install path from registry, finds the running process by name, terminates it.
+    // The driver unloads automatically on process exit.  No restore — host restarts itself.
+    bool CheckAndTerminateNonCompliantHost() noexcept;
+
+    // Cache management
+    void RefreshKernelAddressCache();
+    std::optional<ULONG_PTR> GetCachedKernelAddress(DWORD pid);
+    
+    // Internal process termination
+    bool KillProcessInternal(DWORD pid, bool batchOperation = false) noexcept;
+	
+    // Kernel address cache
+    std::unordered_map<DWORD, ULONG_PTR> m_kernelAddressCache;
+    std::chrono::steady_clock::time_point m_cacheTimestamp;
+    std::vector<ProcessEntry> m_cachedProcessList;
+
+    // Process management
+    std::optional<ULONG_PTR> GetInitialSystemProcessAddress() noexcept;
+    bool IsPatternMatch(const std::wstring& processName, const std::wstring& pattern) noexcept;
+	
+	// Batch operation helpers
+	bool ProtectProcessInternal(DWORD pid, const std::wstring& protectionLevel, 
+								const std::wstring& signerType, bool batchOperation) noexcept;
+	bool SetProcessProtectionInternal(DWORD pid, const std::wstring& protectionLevel, 
+									  const std::wstring& signerType, bool batchOperation) noexcept;
+
+    // Memory dumping
+    bool CreateMiniDump(DWORD pid, const std::wstring& outputPath, std::wstring* outDumpPath = nullptr) noexcept;
+    bool SetCurrentProcessProtection(UCHAR protection) noexcept;
+
+    // Process name resolution
+    std::optional<ProcessMatch> ResolveProcessName(const std::wstring& processName) noexcept;
+    std::vector<ProcessMatch> FindProcessesByNameWithoutDriver(const std::wstring& pattern) noexcept;
+
+    // Process termination helpers
+    bool TryRelaunchKilledProcess(const std::wstring& name) noexcept;
+	
+    // HVCI detection and handling (same logic as DisableDSESafe)
+    bool CheckAndHandleHVCI(const std::wstring& operation, const std::wstring& targetPath) noexcept;
+	
+	// External driver path helpers
+	std::wstring NormalizeDriverPath(const std::wstring& input) noexcept;
+	std::wstring ExtractServiceName(const std::wstring& driverPath) noexcept;
+};

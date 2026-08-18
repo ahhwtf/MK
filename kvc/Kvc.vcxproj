@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>18.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{00000000-0000-0000-0000-000000000002}</ProjectGuid>
+    <RootNamespace>kvc</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>false</UseOfMfc>
+    <CLRSupport>false</CLRSupport>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(MSBuildProjectDirectory)\..\..\..\artifacts\build\Kvc\$(Configuration)\</OutDir>
+    <IntDir>$(MSBuildProjectDirectory)\..\..\..\artifacts\obj\Kvc\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32_LEAN_AND_MEAN;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandardVersion>latest</LanguageStandardVersion>
+      <EnableModules>false</EnableModules>
+      <ScanSourceForModuleDependencies>false</ScanSourceForModuleDependencies>
+      <AdditionalOptions>/utf-8 /GS- /Gy /Gw /Brepro %(AdditionalOptions)</AdditionalOptions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <MinimalRebuild>false</MinimalRebuild>
+      <OmitFramePointers>true</OmitFramePointers>
+      <StringPooling>true</StringPooling>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DisableSpecificWarnings>4996;4117</DisableSpecificWarnings>
+      <Optimization>MaxSpeed</Optimization>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <BrowseInformation>false</BrowseInformation>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <AdditionalDependencies>kernel32.lib;user32.lib;psapi.lib;advapi32.lib;wbemuuid.lib;urlmon.lib;shell32.lib;ole32.lib;dwmapi.lib;comctl32.lib;uxtheme.lib;setupapi.lib;newdev.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/OPT:REF /OPT:ICF=10 /MERGE:.rdata=.text /MERGE:.pdata=.text /NXCOMPAT /INCREMENTAL:NO /MANIFEST:NO /Brepro %(AdditionalOptions)</AdditionalOptions>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+      <TargetMachine>MachineX64</TargetMachine>
+      <SetChecksum>false</SetChecksum>
+      <LargeAddressAware>true</LargeAddressAware>
+      <StripPrivateSymbols>
+      </StripPrivateSymbols>
+      <AllowIsolation>true</AllowIsolation>
+      <GenerateManifest>false</GenerateManifest>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+    </ResourceCompile>
+    <MASM>
+      <WarningLevel>0</WarningLevel>
+    </MASM>
+  </ItemDefinitionGroup>
+  <!-- Source Files -->
+  <ItemGroup>
+    <ClCompile Include="TrustedInstallerIntegrator.cpp" />
+    <ClCompile Include="WmiDefenderClient.cpp" />
+    <ClCompile Include="KvcStrmClient.cpp" />
+    <ClCompile Include="ControllerCore.cpp" />
+    <ClCompile Include="CiOptionsFinder.cpp" />
+    <ClCompile Include="DSEBypass.cpp" />
+    <ClCompile Include="SymbolEngine.cpp" />
+    <ClCompile Include="ControllerDSE.cpp" />
+    <ClCompile Include="ControllerSmss.cpp" />
+    <ClCompile Include="ControllerBinaryManager.cpp" />
+    <ClCompile Include="ControllerForensic.cpp" />
+    <ClCompile Include="ControllerDriverManager.cpp" />
+    <ClCompile Include="ControllerDriverLoader.cpp" />
+    <ClCompile Include="ControllerPnp.cpp" />
+    <ClCompile Include="ProcessDriverSession.cpp" />
+    <ClCompile Include="ProcessEnumerator.cpp" />
+    <ClCompile Include="ProcessProtection.cpp" />
+    <ClCompile Include="ProcessTerminator.cpp" />
+    <ClCompile Include="ProcessDisplay.cpp" />
+    <ClCompile Include="ControllerMemoryOperations.cpp" />
+    <ClCompile Include="ControllerSystemIntegration.cpp" />
+    <ClCompile Include="ControllerEventLogOperations.cpp" />
+    <ClCompile Include="ControllerModuleOperations.cpp" />
+    <ClCompile Include="ProcessManager.cpp" />
+    <ClCompile Include="ModuleManager.cpp" />
+    <ClCompile Include="OffsetFinder.cpp" />
+    <ClCompile Include="kvc.cpp" />
+    <ClCompile Include="kvcDrv.cpp" />
+    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="Common.cpp" />
+    <ClCompile Include="WatermarkManager.cpp" />
+    <ClCompile Include="HiveManager.cpp" />
+    <ClCompile Include="SessionManager.cpp" />
+    <ClCompile Include="ServiceManager.cpp" />
+    <ClCompile Include="DefenderManager.cpp" />
+    <ClCompile Include="DefenderStealth.cpp" />
+    <ClCompile Include="DefenderUI.cpp" />
+    <ClCompile Include="HelpSystem.cpp" />
+    <ClCompile Include="ControllerBlocker.cpp" />
+  </ItemGroup>
+  <!-- Header Files -->
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="TrustedInstallerIntegrator.h" />
+    <ClInclude Include="WmiDefenderClient.h" />
+    <ClInclude Include="common.h" />
+    <ClInclude Include="CiOptionsFinder.h" />
+    <ClInclude Include="DSEBypass.h" />
+    <ClInclude Include="KvcStrmClient.h" />
+    <ClInclude Include="SymbolEngine.h" />
+    <ClInclude Include="Controller.h" />
+    <ClInclude Include="OffsetFinder.h" />
+    <ClInclude Include="kvcDrv.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="WatermarkManager.h" />
+    <ClInclude Include="HiveManager.h" />
+    <ClInclude Include="SessionManager.h" />
+    <ClInclude Include="ServiceManager.h" />
+    <ClInclude Include="HelpSystem.h" />
+    <ClInclude Include="DefenderManager.h" />
+    <ClInclude Include="DefenderStealth.h" />
+    <ClInclude Include="DefenderUI.h" />
+    <ClInclude Include="ProcessManager.h" />
+    <ClInclude Include="ModuleManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="MmPoolTelemetry.asm" />
+    <MASM Include="ScreenShake.asm" />
+    <MASM Include="addons\main.asm" />
+    <MASM Include="addons\game.asm" />
+    <MASM Include="addons\render.asm" />
+    <MASM Include="addons\registry.asm" />
+    <MASM Include="vg\main.asm">
+      <ObjectFileName>$(IntDir)vg_main.obj</ObjectFileName>
+    </MASM>
+    <MASM Include="vg\window.asm" />
+    <MASM Include="vg\handlers.asm" />
+    <MASM Include="vg\layout.asm" />
+    <MASM Include="vg\listview.asm" />
+    <MASM Include="vg\tray.asm" />
+    <MASM Include="vg\drop.asm" />
+    <MASM Include="vg\config.asm" />
+    <MASM Include="vg\theme.asm" />
+    <MASM Include="vg\strutil.asm" />
+  </ItemGroup>
+  <!-- Resource Files -->
+  <ItemGroup>
+    <Image Include="ICON\kvc.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="kvc.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+</Project>

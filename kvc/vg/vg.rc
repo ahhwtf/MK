@@ -1,0 +1,37 @@
+#pragma code_page(65001)
+#include <windows.h>
+
+// Application icon. build.ps1 creates ICON/vg.ico as icon header + CAB payload.
+101 ICON "../ICON/vg.ico"
+
+// Embedded icon+CAB payload. CAB starts at ICON_SIZE bytes.
+102 RCDATA "../ICON/vg.ico"
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION    1,0,0,0
+PRODUCTVERSION 1,0,0,0
+FILEFLAGSMASK  0x3fL
+FILEFLAGS      0x0L
+FILEOS         VOS_NT_WINDOWS32
+FILETYPE       VFT_APP
+FILESUBTYPE    0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName",      "Marek Wesołowski"
+            VALUE "FileDescription",  "VaultGuard - Assembly Version"
+            VALUE "FileVersion",      "1.0.0.0"
+            VALUE "InternalName",     "vg"
+            VALUE "LegalCopyright",   "Copyright (c) 2026 Marek Wesołowski"
+            VALUE "OriginalFilename", "VaultGuard.exe"
+            VALUE "ProductName",      "VaultGuard"
+            VALUE "ProductVersion",   "1.0.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

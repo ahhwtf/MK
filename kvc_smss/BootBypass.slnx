@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Release" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="BootBypass.vcxproj" Id="2babc54c-fd14-4745-92c7-6785c12014e6" />
+</Solution>
